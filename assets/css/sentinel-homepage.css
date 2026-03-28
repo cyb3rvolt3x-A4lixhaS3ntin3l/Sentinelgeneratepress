@@ -1,69 +1,209 @@
 /* 
- * SentinelReign Advanced Homepage Styles
- * Professional multi-genre blog design with animations
+ * SentinelReign Advanced Homepage Styles v3.0
+ * Professional multi-genre blog design with advanced animations
+ * Fully responsive with modern CSS features
  */
 
-/* Container & Layout */
+/* ============================================
+   CSS CUSTOM PROPERTIES (VARIABLES)
+   ============================================ */
+:root {
+	/* Primary Colors */
+	--sentinel-primary: #6366f1;
+	--sentinel-primary-dark: #4f46e5;
+	--sentinel-primary-light: #818cf8;
+	--sentinel-secondary: #ec4899;
+	--sentinel-accent: #14b8a6;
+	
+	/* Neutral Colors */
+	--sentinel-white: #ffffff;
+	--sentinel-surface: #fafafa;
+	--sentinel-surface-2: #f5f5f7;
+	--sentinel-border: #e5e7eb;
+	--sentinel-border-light: #f3f4f6;
+	--sentinel-muted: #6b7280;
+	--sentinel-text: #111827;
+	--sentinel-text-light: #374151;
+	--sentinel-black: #0f172a;
+	
+	/* Gradients */
+	--gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+	--gradient-sunset: linear-gradient(135deg, #f59e0b 0%, #ec4899 100%);
+	--gradient-ocean: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+	--gradient-midnight: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+	
+	/* Shadows */
+	--shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+	--shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+	--shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+	--shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+	--shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+	--shadow-glow: 0 0 40px rgba(99, 102, 241, 0.3);
+	
+	/* Border Radius */
+	--radius-sm: 0.375rem;
+	--radius-md: 0.5rem;
+	--radius-lg: 0.75rem;
+	--radius-xl: 1rem;
+	--radius-2xl: 1.5rem;
+	--radius-full: 9999px;
+	
+	/* Transitions */
+	--transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+	--transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+	--transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================
+   BASE & RESET
+   ============================================ */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	scroll-behavior: smooth;
+	-webkit-text-size-adjust: 100%;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	font-family: var(--font-sans, "Plus Jakarta Sans", system-ui, -apple-system, sans-serif);
+	font-size: 16px;
+	line-height: 1.6;
+	color: var(--sentinel-text);
+	background-color: var(--sentinel-surface);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* Enhanced Selection */
+::selection {
+	background: var(--sentinel-primary);
+	color: var(--sentinel-white);
+}
+
+/* Focus Styles for Accessibility */
+:focus-visible {
+	outline: 2px solid var(--sentinel-primary);
+	outline-offset: 2px;
+}
+
+/* ============================================
+   CONTAINER & LAYOUT
+   ============================================ */
 .sentinel-container {
+	width: 100%;
 	max-width: 1280px;
 	margin: 0 auto;
-	padding: 0 20px;
+	padding: 0 clamp(1rem, 3vw, 1.5rem);
 }
 
-/* Hero Section */
+/* ============================================
+   HERO SECTION - ADVANCED
+   ============================================ */
 .sentinel-hero {
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-	color: white;
-	padding: 100px 20px;
-	text-align: center;
 	position: relative;
+	min-height: 80vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--gradient-primary);
 	overflow: hidden;
+	padding: clamp(4rem, 10vw, 8rem) clamp(1rem, 3vw, 2rem);
 }
 
+/* Animated Background Pattern */
 .sentinel-hero::before {
 	content: '';
 	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,165.3C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+	inset: 0;
+	background-image: 
+		radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+		radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+		url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 	background-size: cover;
+	animation: heroPattern 20s ease-in-out infinite;
 	pointer-events: none;
+}
+
+@keyframes heroPattern {
+	0%, 100% { transform: translateY(0) scale(1); }
+	50% { transform: translateY(-10px) scale(1.02); }
+}
+
+/* Floating Orbs Animation */
+.sentinel-hero::after {
+	content: '';
+	position: absolute;
+	width: 300px;
+	height: 300px;
+	background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+	border-radius: 50%;
+	top: 10%;
+	right: 10%;
+	animation: floatOrb 8s ease-in-out infinite;
+	pointer-events: none;
+}
+
+@keyframes floatOrb {
+	0%, 100% { transform: translate(0, 0) scale(1); }
+	25% { transform: translate(20px, -30px) scale(1.1); }
+	50% { transform: translate(-10px, 20px) scale(0.9); }
+	75% { transform: translate(30px, 10px) scale(1.05); }
 }
 
 .sentinel-hero-content {
 	position: relative;
 	z-index: 2;
+	text-align: center;
 	max-width: 900px;
 	margin: 0 auto;
 }
 
 .sentinel-hero-title {
-	font-size: clamp(2.5rem, 5vw, 4rem);
+	font-family: var(--font-heading, "Outfit", sans-serif);
+	font-size: clamp(2.5rem, 6vw, 4.5rem);
 	font-weight: 800;
-	margin-bottom: 20px;
-	letter-spacing: -0.02em;
 	line-height: 1.1;
+	letter-spacing: -0.03em;
+	margin-bottom: 1.5rem;
+	color: var(--sentinel-white);
+	text-shadow: 0 2px 20px rgba(0,0,0,0.2);
+	animation: titleGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes titleGlow {
+	from { text-shadow: 0 2px 20px rgba(0,0,0,0.2); }
+	to { text-shadow: 0 2px 30px rgba(255,255,255,0.3), 0 0 40px rgba(99,102,241,0.5); }
 }
 
 .sentinel-hero-title .highlight {
-	background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+	background: var(--gradient-sunset);
 	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
 	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	display: inline-block;
+	position: relative;
 }
 
 .sentinel-hero-subtitle {
-	font-size: clamp(1.1rem, 2vw, 1.4rem);
+	font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+	line-height: 1.7;
 	opacity: 0.95;
-	margin-bottom: 40px;
-	line-height: 1.6;
+	margin-bottom: 2.5rem;
+	color: rgba(255,255,255,0.95);
+	max-width: 700px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .sentinel-hero-cta {
 	display: flex;
-	gap: 15px;
+	gap: 1rem;
 	justify-content: center;
 	flex-wrap: wrap;
 }
