@@ -1,7 +1,7 @@
 <?php
 /**
  * Template Name: Advanced Homepage
- * Custom homepage for SentinelReign with featured posts, most viewed, recent posts, and founder section
+ * Custom homepage for SentinelReign - Optimized for Lightning Fast Performance
  *
  * @package GeneratePress
  * @subpackage SentinelReign_Customization
@@ -13,11 +13,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 get_header();
 
-// Get theme options
+// Get theme options with defaults
 $show_featured = get_option( 'sentinel_show_featured', true );
-$featured_count = get_option( 'sentinel_featured_count', 3 );
+$featured_count = absint( get_option( 'sentinel_featured_count', 3 ) );
 $show_most_viewed = get_option( 'sentinel_show_most_viewed', true );
-$most_viewed_count = get_option( 'sentinel_most_viewed_count', 5 );
+$most_viewed_count = absint( get_option( 'sentinel_most_viewed_count', 5 ) );
 $founder_name = get_option( 'sentinel_founder_name', 'Syed Abrar' );
 $founder_bio = get_option( 'sentinel_founder_bio', '' );
 $founder_image = get_option( 'sentinel_founder_image', '' );
@@ -34,8 +34,8 @@ $team_members = is_array( $team_members_json ) ? $team_members_json : json_decod
 		
 		<?php do_action( 'generate_before_main_content' ); ?>
 		
-		<!-- Hero Section -->
-		<section class="sentinel-hero" data-aos="fade-down">
+		<!-- Hero Section (CSS-only animation for speed) -->
+		<section class="sentinel-hero sentinel-fade-in">
 			<div class="sentinel-hero-content">
 				<h1 class="sentinel-hero-title">Welcome to <span class="highlight">SentinelReign</span></h1>
 				<p class="sentinel-hero-subtitle">Your premier destination for Technology, Science, AI, Cybersecurity, Programming, Poetry, Self-Improvement, and more.</p>
@@ -48,7 +48,7 @@ $team_members = is_array( $team_members_json ) ? $team_members_json : json_decod
 
 		<!-- About Us Section -->
 		<?php if ( ! empty( $about_us_content ) ) : ?>
-		<section class="sentinel-about-section" data-aos="fade-up">
+		<section class="sentinel-about-section sentinel-reveal">
 			<div class="sentinel-container">
 				<div class="section-header">
 					<h2 class="section-title"><?php echo esc_html( $about_us_title ); ?></h2>
@@ -63,7 +63,7 @@ $team_members = is_array( $team_members_json ) ? $team_members_json : json_decod
 
 		<!-- Team Section -->
 		<?php if ( ! empty( $team_members ) && is_array( $team_members ) ) : ?>
-		<section class="sentinel-team-section" data-aos="fade-up">
+		<section class="sentinel-team-section sentinel-reveal">
 			<div class="sentinel-container">
 				<div class="section-header">
 					<h2 class="section-title">Meet Our Team</h2>
@@ -80,7 +80,7 @@ $team_members = is_array( $team_members_json ) ? $team_members_json : json_decod
 					<div class="team-member-card">
 						<div class="team-member-image">
 							<?php if ( $member_image ) : ?>
-								<img src="<?php echo esc_url( $member_image ); ?>" alt="<?php echo esc_attr( $member['name'] ); ?>" loading="lazy" />
+								<img src="<?php echo esc_url( $member_image ); ?>" alt="<?php echo esc_attr( $member['name'] ); ?>" loading="lazy" width="256" height="256" />
 							<?php else : ?>
 								<div class="team-member-placeholder">
 									<i class="fas fa-user"></i>
@@ -122,12 +122,12 @@ $team_members = is_array( $team_members_json ) ? $team_members_json : json_decod
 
 		<!-- Founder Section -->
 		<?php if ( ! empty( $founder_bio ) || ! empty( $founder_image ) ) : ?>
-		<section class="sentinel-founder-section" data-aos="fade-up">
+		<section class="sentinel-founder-section sentinel-reveal">
 			<div class="sentinel-container">
 				<div class="sentinel-founder-card">
 					<?php if ( ! empty( $founder_image ) ) : ?>
 					<div class="sentinel-founder-image">
-						<img src="<?php echo esc_url( $founder_image ); ?>" alt="<?php echo esc_attr( $founder_name ); ?>" loading="lazy" />
+						<img src="<?php echo esc_url( $founder_image ); ?>" alt="<?php echo esc_attr( $founder_name ); ?>" loading="lazy" width="400" height="400" />
 					</div>
 					<?php endif; ?>
 					<div class="sentinel-founder-info">
@@ -165,13 +165,17 @@ $team_members = is_array( $team_members_json ) ? $team_members_json : json_decod
 		</section>
 		<?php endif; ?>
 
-		<!-- Featured Posts Section -->
+		<!-- Featured Posts Section (Optimized Query) -->
 		<?php if ( $show_featured ) :
+			// Performance: Optimize query with no_found_rows and disabled caches
 			$featured_args = array(
-				'post_type'      => 'post',
-				'posts_per_page' => absint( $featured_count ),
-				'meta_key'       => '_thumbnail_id',
-				'tax_query'      => array(
+				'post_type'              => 'post',
+				'posts_per_page'         => absint( $featured_count ),
+				'meta_key'               => '_thumbnail_id',
+				'no_found_rows'          => true, // Skip pagination count for speed
+				'update_post_term_cache' => false, // Disable term cache
+				'update_post_meta_cache' => false, // Disable meta cache
+				'tax_query'              => array(
 					array(
 						'taxonomy' => 'post_tag',
 						'field'    => 'slug',
@@ -181,19 +185,35 @@ $team_members = is_array( $team_members_json ) ? $team_members_json : json_decod
 			);
 			
 			// Fallback to sticky posts if no featured tag posts
-			if ( ! get_posts( $featured_args ) ) {
-				$featured_args = array(
-					'post_type'      => 'post',
-					'posts_per_page' => absint( $featured_count ),
-					'post__in'       => get_option( 'sticky_posts' ),
-				);
+			if ( ! get_posts( array_merge( $featured_args, array( 'fields' => 'ids' ) ) ) ) {
+				$sticky_ids = get_option( 'sticky_posts', array() );
+				if ( ! empty( $sticky_ids ) ) {
+					$featured_args = array(
+						'post_type'              => 'post',
+						'posts_per_page'         => absint( $featured_count ),
+						'post__in'               => $sticky_ids,
+						'no_found_rows'          => true,
+						'update_post_term_cache' => false,
+						'update_post_meta_cache' => false,
+					);
+				} else {
+					// Final fallback: recent posts with thumbnails
+					$featured_args = array(
+						'post_type'              => 'post',
+						'posts_per_page'         => absint( $featured_count ),
+						'meta_key'               => '_thumbnail_id',
+						'no_found_rows'          => true,
+						'update_post_term_cache' => false,
+						'update_post_meta_cache' => false,
+					);
+				}
 			}
 			
 			$featured_query = new WP_Query( $featured_args );
 			
 			if ( $featured_query->have_posts() ) :
 		?>
-		<section id="featured" class="sentinel-featured-section" data-aos="fade-up">
+		<section id="featured" class="sentinel-featured-section sentinel-reveal">
 			<div class="sentinel-container">
 				<div class="section-header">
 					<h2 class="section-title">Featured Posts</h2>
@@ -205,7 +225,7 @@ $team_members = is_array( $team_members_json ) ? $team_members_json : json_decod
 						<?php if ( has_post_thumbnail() ) : ?>
 						<div class="sentinel-card-image">
 							<a href="<?php the_permalink(); ?>">
-								<?php the_post_thumbnail( 'large', array( 'loading' => 'lazy', 'class' => 'card-thumbnail' ) ); ?>
+								<?php the_post_thumbnail( 'large', array( 'loading' => 'lazy', 'class' => 'card-thumbnail', 'width' => 800, 'height' => 600 ) ); ?>
 							</a>
 							<span class="featured-badge">Featured</span>
 						</div>
@@ -242,24 +262,30 @@ $team_members = is_array( $team_members_json ) ? $team_members_json : json_decod
 		</section>
 		<?php endif; endif; ?>
 
-		<!-- Most Viewed Posts Section -->
+		<!-- Most Viewed Posts Section (Optimized) -->
 		<?php if ( $show_most_viewed ) :
 			// Try to get most viewed using post meta (for sites with view tracking)
 			$most_viewed_args = array(
-				'post_type'      => 'post',
-				'posts_per_page' => absint( $most_viewed_count ),
-				'meta_key'       => 'post_views_count',
-				'orderby'        => 'meta_value_num',
-				'order'          => 'DESC',
+				'post_type'              => 'post',
+				'posts_per_page'         => absint( $most_viewed_count ),
+				'meta_key'               => 'post_views_count',
+				'orderby'                => 'meta_value_num',
+				'order'                  => 'DESC',
+				'no_found_rows'          => true,
+				'update_post_term_cache' => false,
+				'update_post_meta_cache' => false,
 			);
 			
 			// Fallback to popular posts by comments if no view count
-			if ( ! get_posts( $most_viewed_args ) ) {
+			if ( ! get_posts( array_merge( $most_viewed_args, array( 'fields' => 'ids' ) ) ) ) {
 				$most_viewed_args = array(
-					'post_type'      => 'post',
-					'posts_per_page' => absint( $most_viewed_count ),
-					'orderby'        => 'comment_count',
-					'order'          => 'DESC',
+					'post_type'              => 'post',
+					'posts_per_page'         => absint( $most_viewed_count ),
+					'orderby'                => 'comment_count',
+					'order'                  => 'DESC',
+					'no_found_rows'          => true,
+					'update_post_term_cache' => false,
+					'update_post_meta_cache' => false,
 				);
 			}
 			
@@ -267,7 +293,7 @@ $team_members = is_array( $team_members_json ) ? $team_members_json : json_decod
 			
 			if ( $most_viewed_query->have_posts() ) :
 		?>
-		<section class="sentinel-most-viewed-section" data-aos="fade-up">
+		<section class="sentinel-most-viewed-section sentinel-reveal">
 			<div class="sentinel-container">
 				<div class="section-header">
 					<h2 class="section-title">Most Popular</h2>
@@ -280,7 +306,7 @@ $team_members = is_array( $team_members_json ) ? $team_members_json : json_decod
 						<?php if ( has_post_thumbnail() ) : ?>
 						<div class="list-thumbnail">
 							<a href="<?php the_permalink(); ?>">
-								<?php the_post_thumbnail( 'thumbnail', array( 'loading' => 'lazy' ) ); ?>
+								<?php the_post_thumbnail( 'thumbnail', array( 'loading' => 'lazy', 'width' => 150, 'height' => 150 ) ); ?>
 							</a>
 						</div>
 						<?php endif; ?>
@@ -303,8 +329,8 @@ $team_members = is_array( $team_members_json ) ? $team_members_json : json_decod
 		</section>
 		<?php endif; endif; ?>
 
-		<!-- Categories Section -->
-		<section class="sentinel-categories-section" data-aos="fade-up">
+		<!-- Categories Section (Lightning Fast) -->
+		<section class="sentinel-categories-section sentinel-reveal">
 			<div class="sentinel-container">
 				<div class="section-header">
 					<h2 class="section-title">Explore by Category</h2>
@@ -316,31 +342,34 @@ $team_members = is_array( $team_members_json ) ? $team_members_json : json_decod
 						'number'   => 12,
 						'orderby'  => 'count',
 						'order'    => 'DESC',
+						'hide_empty' => true,
 					) );
 					
-					foreach ( $categories as $category ) :
-						$cat_color = '';
-						switch ( strtolower( $category->name ) ) {
-							case 'technology': $cat_color = '#3b82f6'; break;
-							case 'ai': $cat_color = '#8b5cf6'; break;
-							case 'cybersecurity': $cat_color = '#ef4444'; break;
-							case 'programming': $cat_color = '#10b981'; break;
-							case 'science': $cat_color = '#f59e0b'; break;
-							case 'poetry': $cat_color = '#ec4899'; break;
-							default: $cat_color = '#6b7280';
-						}
+					if ( $categories ) :
+						foreach ( $categories as $category ) :
+							$cat_color = '';
+							switch ( strtolower( $category->name ) ) {
+								case 'technology': $cat_color = '#3b82f6'; break;
+								case 'ai': $cat_color = '#8b5cf6'; break;
+								case 'cybersecurity': $cat_color = '#ef4444'; break;
+								case 'programming': $cat_color = '#10b981'; break;
+								case 'science': $cat_color = '#f59e0b'; break;
+								case 'poetry': $cat_color = '#ec4899'; break;
+								default: $cat_color = '#6b7280';
+							}
 					?>
 					<a href="<?php echo esc_url( get_category_link( $category->term_id ) ); ?>" class="sentinel-category-card" style="border-left-color: <?php echo esc_attr( $cat_color ); ?>;">
 						<h3><?php echo esc_html( $category->name ); ?></h3>
 						<span class="category-count"><?php echo esc_html( $category->count ); ?> posts</span>
 					</a>
-					<?php endforeach; ?>
+					<?php   endforeach;
+					endif; ?>
 				</div>
 			</div>
 		</section>
 
-		<!-- Latest Posts Section with Pagination -->
-		<section id="latest-posts" class="sentinel-latest-section" data-aos="fade-up">
+		<!-- Latest Posts Section with Pagination (Optimized) -->
+		<section id="latest-posts" class="sentinel-latest-section sentinel-reveal">
 			<div class="sentinel-container">
 				<div class="section-header">
 					<h2 class="section-title">Latest Articles</h2>
@@ -353,16 +382,21 @@ $team_members = is_array( $team_members_json ) ? $team_members_json : json_decod
 					$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
 					
 					$latest_args = array(
-						'post_type'      => 'post',
-						'posts_per_page' => 9,
-						'paged'          => $paged,
-						'post_status'    => 'publish',
+						'post_type'              => 'post',
+						'posts_per_page'         => 9,
+						'paged'                  => $paged,
+						'post_status'            => 'publish',
+						'no_found_rows'          => false, // Keep for pagination
+						'update_post_term_cache' => false,
+						'update_post_meta_cache' => false,
 					);
 					
 					// Exclude featured posts from latest if showing featured section
-					if ( $show_featured && $featured_query->have_posts() ) {
-						$featured_ids = $featured_query->posts;
-						$latest_args['post__not_in'] = wp_list_pluck( $featured_ids, 'ID' );
+					if ( $show_featured && isset( $featured_query ) && $featured_query->have_posts() ) {
+						$featured_ids = wp_list_pluck( $featured_query->posts, 'ID' );
+						if ( ! empty( $featured_ids ) ) {
+							$latest_args['post__not_in'] = $featured_ids;
+						}
 					}
 					
 					$latest_query = new WP_Query( $latest_args );
@@ -374,7 +408,7 @@ $team_members = is_array( $team_members_json ) ? $team_members_json : json_decod
 						<?php if ( has_post_thumbnail() ) : ?>
 						<div class="sentinel-card-image">
 							<a href="<?php the_permalink(); ?>">
-								<?php the_post_thumbnail( 'medium_large', array( 'loading' => 'lazy', 'class' => 'card-thumbnail' ) ); ?>
+								<?php the_post_thumbnail( 'medium_large', array( 'loading' => 'lazy', 'class' => 'card-thumbnail', 'width' => 768, 'height' => 576 ) ); ?>
 							</a>
 						</div>
 						<?php else : ?>
@@ -408,15 +442,17 @@ $team_members = is_array( $team_members_json ) ? $team_members_json : json_decod
 						endwhile;
 						
 						// Pagination
-						echo '<div class="sentinel-pagination">';
-						echo paginate_links( array(
-							'total'     => $latest_query->max_num_pages,
-							'current'   => $paged,
-							'prev_text' => '&larr; Previous',
-							'next_text' => 'Next &rarr;',
-							'type'      => 'list',
-						) );
-						echo '</div>';
+						if ( $latest_query->max_num_pages > 1 ) {
+							echo '<div class="sentinel-pagination">';
+							echo paginate_links( array(
+								'total'     => $latest_query->max_num_pages,
+								'current'   => $paged,
+								'prev_text' => '&larr; Previous',
+								'next_text' => 'Next &rarr;',
+								'type'      => 'list',
+							) );
+							echo '</div>';
+						}
 						
 						wp_reset_postdata();
 					else :

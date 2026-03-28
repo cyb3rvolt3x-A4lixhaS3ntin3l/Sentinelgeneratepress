@@ -43,67 +43,67 @@ if ( empty( $author_bio ) ) {
 $author_bio = __( 'Author and contributor to SentinelReign.', 'generatepress' );
 }
 ?>
-<div class="sentinel-author-widget" data-aos="fade-up">
-<div class="sentinel-author-card">
-<div class="sentinel-author-avatar">
-<a href="<?php echo esc_url( $author_posts_url ); ?>">
-<?php echo $author_avatar; // phpcs:ignore -- Avatar is escaped ?>
-</a>
-</div>
-<div class="sentinel-author-info">
-<h3 class="sentinel-author-name">
-<a href="<?php echo esc_url( $author_posts_url ); ?>"><?php echo esc_html( $author_name ); ?></a>
-</h3>
-<span class="sentinel-author-title"><?php esc_html_e( 'About the Author', 'generatepress' ); ?></span>
-<p class="sentinel-author-bio"><?php echo esc_html( $author_bio ); ?></p>
-
-<?php if ( $author_twitter || $author_facebook || $author_linkedin || $author_github || $author_website ) : ?>
-<div class="sentinel-author-social">
-<?php if ( $author_twitter ) : ?>
-<a href="<?php echo esc_url( $author_twitter ); ?>" target="_blank" rel="noopener noreferrer" class="social-link twitter" aria-label="Twitter">
-<i class="fab fa-twitter"></i>
-</a>
-<?php endif; ?>
-
-<?php if ( $author_facebook ) : ?>
-<a href="<?php echo esc_url( $author_facebook ); ?>" target="_blank" rel="noopener noreferrer" class="social-link facebook" aria-label="Facebook">
-<i class="fab fa-facebook-f"></i>
-</a>
-<?php endif; ?>
-
-<?php if ( $author_linkedin ) : ?>
-<a href="<?php echo esc_url( $author_linkedin ); ?>" target="_blank" rel="noopener noreferrer" class="social-link linkedin" aria-label="LinkedIn">
-<i class="fab fa-linkedin-in"></i>
-</a>
-<?php endif; ?>
-
-<?php if ( $author_github ) : ?>
-<a href="<?php echo esc_url( $author_github ); ?>" target="_blank" rel="noopener noreferrer" class="social-link github" aria-label="GitHub">
-<i class="fab fa-github"></i>
-</a>
-<?php endif; ?>
-
-<?php if ( $author_website ) : ?>
-<a href="<?php echo esc_url( $author_website ); ?>" target="_blank" rel="noopener noreferrer" class="social-link website" aria-label="Website">
-<i class="fas fa-globe"></i>
-</a>
-<?php endif; ?>
-</div>
-<?php endif; ?>
-
-<div class="sentinel-author-posts-link">
-<a href="<?php echo esc_url( $author_posts_url ); ?>">
-<?php
-printf(
-/* translators: %s: author name */
-esc_html__( 'View all posts by %s →', 'generatepress' ),
-'<span>' . esc_html( $author_name ) . '</span>'
-);
-?>
-</a>
-</div>
-</div>
-</div>
+<div class="sentinel-author-widget sentinel-reveal">
+	<div class="sentinel-author-card">
+		<div class="sentinel-author-avatar">
+			<a href="<?php echo esc_url( $author_posts_url ); ?>">
+				<?php echo $author_avatar; // phpcs:ignore -- Avatar is escaped ?>
+			</a>
+		</div>
+		<div class="sentinel-author-info">
+			<h3 class="sentinel-author-name">
+				<a href="<?php echo esc_url( $author_posts_url ); ?>"><?php echo esc_html( $author_name ); ?></a>
+			</h3>
+			<span class="sentinel-author-title"><?php esc_html_e( 'About the Author', 'generatepress' ); ?></span>
+			<p class="sentinel-author-bio"><?php echo esc_html( $author_bio ); ?></p>
+			
+			<?php if ( $author_twitter || $author_facebook || $author_linkedin || $author_github || $author_website ) : ?>
+			<div class="sentinel-author-social">
+				<?php if ( $author_twitter ) : ?>
+				<a href="<?php echo esc_url( $author_twitter ); ?>" target="_blank" rel="noopener noreferrer" class="social-link twitter" aria-label="Twitter">
+					<i class="fab fa-twitter"></i>
+				</a>
+				<?php endif; ?>
+				
+				<?php if ( $author_facebook ) : ?>
+				<a href="<?php echo esc_url( $author_facebook ); ?>" target="_blank" rel="noopener noreferrer" class="social-link facebook" aria-label="Facebook">
+					<i class="fab fa-facebook-f"></i>
+				</a>
+				<?php endif; ?>
+				
+				<?php if ( $author_linkedin ) : ?>
+				<a href="<?php echo esc_url( $author_linkedin ); ?>" target="_blank" rel="noopener noreferrer" class="social-link linkedin" aria-label="LinkedIn">
+					<i class="fab fa-linkedin-in"></i>
+				</a>
+				<?php endif; ?>
+				
+				<?php if ( $author_github ) : ?>
+				<a href="<?php echo esc_url( $author_github ); ?>" target="_blank" rel="noopener noreferrer" class="social-link github" aria-label="GitHub">
+					<i class="fab fa-github"></i>
+				</a>
+				<?php endif; ?>
+				
+				<?php if ( $author_website ) : ?>
+				<a href="<?php echo esc_url( $author_website ); ?>" target="_blank" rel="noopener noreferrer" class="social-link website" aria-label="Website">
+					<i class="fas fa-globe"></i>
+				</a>
+				<?php endif; ?>
+			</div>
+			<?php endif; ?>
+			
+			<div class="sentinel-author-posts-link">
+				<a href="<?php echo esc_url( $author_posts_url ); ?>">
+					<?php
+					printf(
+						/* translators: %s: author name */
+						esc_html__( 'View all posts by %s →', 'generatepress' ),
+						'<span>' . esc_html( $author_name ) . '</span>'
+					);
+					?>
+				</a>
+			</div>
+		</div>
+	</div>
 </div>
 <?php
 }
