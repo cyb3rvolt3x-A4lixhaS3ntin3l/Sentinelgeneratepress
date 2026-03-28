@@ -57,6 +57,44 @@ function sentinel_reign_register_settings() {
 	);
 	register_setting( 'sentinel-reign-settings', 'sentinel_footer_description' );
 
+	// About Us Section
+	add_settings_section(
+		'sentinel_reign_about_section',
+		__( 'About Us & Team', 'generatepress' ),
+		'sentinel_reign_about_section_callback',
+		'sentinel-reign-settings'
+	);
+
+	// About Us Content
+	add_settings_field(
+		'sentinel_about_us_content',
+		__( 'About Us Content', 'generatepress' ),
+		'sentinel_reign_about_us_content_callback',
+		'sentinel-reign-settings',
+		'sentinel_reign_about_section'
+	);
+	register_setting( 'sentinel-reign-settings', 'sentinel_about_us_content' );
+
+	// About Us Title
+	add_settings_field(
+		'sentinel_about_us_title',
+		__( 'About Us Title', 'generatepress' ),
+		'sentinel_reign_about_us_title_callback',
+		'sentinel-reign-settings',
+		'sentinel_reign_about_section'
+	);
+	register_setting( 'sentinel-reign-settings', 'sentinel_about_us_title' );
+
+	// Team Members (JSON)
+	add_settings_field(
+		'sentinel_team_members',
+		__( 'Team Members (JSON)', 'generatepress' ),
+		'sentinel_reign_team_members_callback',
+		'sentinel-reign-settings',
+		'sentinel_reign_about_section'
+	);
+	register_setting( 'sentinel-reign-settings', 'sentinel_team_members' );
+
 	// Social Media Links
 	add_settings_field(
 		'sentinel_social_links',
@@ -308,6 +346,10 @@ function sentinel_reign_homepage_section_callback() {
 	echo '<p>' . __( 'Control what content appears on your homepage.', 'generatepress' ) . '</p>';
 }
 
+function sentinel_reign_about_section_callback() {
+	echo '<p>' . __( 'Configure About Us section and team members information for your homepage.', 'generatepress' ) . '</p>';
+}
+
 function sentinel_reign_seo_section_callback() {
 	echo '<p>' . __( 'Optimize your site for search engines with meta tags and Open Graph data.', 'generatepress' ) . '</p>';
 }
@@ -437,6 +479,41 @@ function sentinel_reign_adsense_publisher_id_callback() {
 function sentinel_reign_adsense_auto_ads_callback() {
 	$value = get_option( 'sentinel_adsense_auto_ads', false );
 	echo '<label><input type="checkbox" name="sentinel_adsense_auto_ads" value="1" ' . checked( $value, true, false ) . ' /> Enable Google AdSense Auto Ads</label>';
+}
+
+// About Us Section Callbacks
+function sentinel_reign_about_us_title_callback() {
+	$value = get_option( 'sentinel_about_us_title', 'About SentinelReign' );
+	echo '<input type="text" name="sentinel_about_us_title" value="' . esc_attr( $value ) . '" class="regular-text" />';
+}
+
+function sentinel_reign_about_us_content_callback() {
+	$default = 'SentinelReign is your premier destination for cutting-edge content on technology, science, artificial intelligence, cybersecurity, programming, poetry, and self-improvement. Founded with a vision to bridge the gap between technical expertise and creative expression, we deliver high-quality articles that inform, inspire, and empower our readers.';
+	$value = get_option( 'sentinel_about_us_content', $default );
+	echo '<textarea name="sentinel_about_us_content" class="large-text" rows="4">' . esc_textarea( $value ) . '</textarea>';
+	echo '<p class="description">This content will appear in the About Us section on your homepage.</p>';
+}
+
+function sentinel_reign_team_members_callback() {
+	$default = array(
+		array(
+			'name' => 'Syed Abrar',
+			'role' => 'Founder & Editor-in-Chief',
+			'bio' => 'Passionate about technology and sharing knowledge.',
+			'image' => '',
+			'social' => array(
+				'twitter' => '',
+				'linkedin' => '',
+				'github' => '',
+			),
+		),
+	);
+	$value = get_option( 'sentinel_team_members', $default );
+	if ( ! is_array( $value ) ) {
+		$value = $default;
+	}
+	echo '<textarea name="sentinel_team_members" class="large-text code" rows="10">' . esc_textarea( wp_json_encode( $value, JSON_PRETTY_PRINT ) ) . '</textarea>';
+	echo '<p class="description">Define team members in JSON format. Each member should have: name, role, bio, image (URL), and social (object with twitter, linkedin, github URLs).</p>';
 }
 
 function sentinel_reign_header_code_callback() {
