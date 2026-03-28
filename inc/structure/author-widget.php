@@ -16,7 +16,12 @@ if ( ! function_exists( 'sentinel_reign_author_widget' ) ) :
  * Display author widget on single posts
  */
 function sentinel_reign_author_widget() {
-if ( ! is_single() ) {
+if ( ! is_single() && ! is_singular( 'post' ) ) {
+return;
+}
+
+global $post;
+if ( ! $post || 'post' !== $post->post_type ) {
 return;
 }
 
@@ -33,8 +38,9 @@ $author_linkedin = get_the_author_meta( 'linkedin', $author_id );
 $author_github = get_the_author_meta( 'github', $author_id );
 $author_website = get_the_author_meta( 'user_url', $author_id );
 
+// Always show widget even if bio is empty - use fallback
 if ( empty( $author_bio ) ) {
-return;
+$author_bio = __( 'Author and contributor to SentinelReign.', 'generatepress' );
 }
 ?>
 <div class="sentinel-author-widget" data-aos="fade-up">
