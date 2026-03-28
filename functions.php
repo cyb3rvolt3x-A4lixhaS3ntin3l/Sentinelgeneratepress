@@ -126,9 +126,16 @@ require $theme_dir . '/inc/structure/search-modal.php';
  * Custom SentinelReign Modifications
  * Premium Minimalist Theme Integration
  */
+
+// Include Admin Settings Panel
+require get_template_directory() . '/inc/admin-settings/class-admin-settings.php';
+
 function sentinel_reign_enqueue_scripts() {
     // Premium Typography
     wp_enqueue_style( 'sentinel-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Fira+Code:wght@400&display=swap', array(), null );
+    
+    // Font Awesome for social icons
+    wp_enqueue_style( 'font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css', array(), '6.5.1' );
     
     // Tailwind CSS CDN
     wp_enqueue_script( 'tailwindcss', 'https://cdn.tailwindcss.com', array(), null, false );
@@ -139,6 +146,9 @@ function sentinel_reign_enqueue_scripts() {
     
     // Custom Premium Theme Style
     wp_enqueue_style( 'sentinel-minimal-css', get_template_directory_uri() . '/assets/css/premium-minimal.css', array(), '2.0.0' );
+    
+    // Advanced Homepage Styles
+    wp_enqueue_style( 'sentinel-homepage-css', get_template_directory_uri() . '/assets/css/sentinel-homepage.css', array(), '2.0.0' );
     
     // Custom Premium Theme Script
     wp_enqueue_script( 'sentinel-minimal-js', get_template_directory_uri() . '/assets/js/premium-minimal.js', array('aos-js'), '2.0.0', true );
@@ -180,6 +190,10 @@ add_action('wp_head', 'sentinel_reign_tailwind_config', 5);
 function sentinel_reign_seo_meta_tags() {
     global $post;
     echo '<!-- SentinelReign Premium SEO Elements -->'."\n";
+    
+    // Get default meta description from settings
+    $default_meta_desc = get_option( 'sentinel_default_meta_desc', 'SentinelReign.com - Cyber Security & Programming Blog by Syed Abrar' );
+    
     if ( is_singular() && !is_front_page() ) {
         $meta_desc = get_the_excerpt();
         $meta_desc = wp_strip_all_tags( $meta_desc );
@@ -200,14 +214,77 @@ function sentinel_reign_seo_meta_tags() {
                 echo '<meta property="og:image" content="' . esc_url($image[0]) . '" />' . "\n";
             }
         } else {
-            // Default placeholder SEO image
-            echo '<meta property="og:image" content="' . esc_url(get_template_directory_uri() . '/assets/images/sentinel-default-og.jpg') . '" />' . "\n";
+            // Default placeholder SEO image from settings
+            $default_og_image = get_option( 'sentinel_og_default_image', '' );
+            if ( ! empty( $default_og_image ) ) {
+                echo '<meta property="og:image" content="' . esc_url($default_og_image) . '" />' . "\n";
+            } else {
+                echo '<meta property="og:image" content="' . esc_url(get_template_directory_uri() . '/assets/images/sentinel-default-og.jpg') . '" />' . "\n";
+            }
+        }
+    } elseif ( is_front_page() || is_home() ) {
+        echo '<meta name="description" content="' . esc_attr( $default_meta_desc ) . '" />' . "\n";
+        echo '<meta property="og:title" content="SentinelReign - Technology, Science, AI, Cybersecurity & More" />' . "\n";
+        echo '<meta property="og:type" content="website" />' . "\n";
+        
+        $default_og_image = get_option( 'sentinel_og_default_image', '' );
+        if ( ! empty( $default_og_image ) ) {
+            echo '<meta property="og:image" content="' . esc_url($default_og_image) . '" />' . "\n";
         }
     } else {
-        echo '<meta name="description" content="SentinelReign.com - Cyber Security & Programming Blog by Syed Abrar" />' . "\n";
-        echo '<meta property="og:title" content="SentinelReign - Cyber Security & Programming" />' . "\n";
+        echo '<meta name="description" content="' . esc_attr( $default_meta_desc ) . '" />' . "\n";
+        echo '<meta property="og:title" content="SentinelReign - Multi-Genre Professional Blog" />' . "\n";
         echo '<meta property="og:type" content="website" />' . "\n";
     }
 }
 add_action( 'wp_head', 'sentinel_reign_seo_meta_tags', 1 );
+
+// Google AdSense Integration
+function sentinel_reign_adsense_integration() {
+    $publisher_id = get_option( 'sentinel_adsense_publisher_id', '' );
+    $auto_ads = get_option( 'sentinel_adsense_auto_ads', false );
+    
+    if ( ! empty( $publisher_id ) && $auto_ads ) {
+        ?>
+        <!-- Google AdSense Auto Ads -->
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=<?php echo esc_attr( $publisher_id ); ?>" crossorigin="anonymous"></script>
+        <?php
+    }
+}
+add_action( 'wp_head', 'sentinel_reign_adsense_integration', 2 );
+
+// Custom Header Code from Settings
+function sentinel_reign_custom_header_code() {
+    $header_code = get_option( 'sentinel_header_code', '' );
+    if ( ! empty( $header_code ) ) {
+        echo $header_code . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+    }
+}
+add_action( 'wp_head', 'sentinel_reign_custom_header_code', 9999 );
+
+// Custom Footer Code from Settings
+function sentinel_reign_custom_footer_code() {
+    $footer_code = get_option( 'sentinel_footer_code', '' );
+    if ( ! empty( $footer_code ) ) {
+        echo $footer_code . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+    }
+}
+add_action( 'wp_footer', 'sentinel_reign_custom_footer_code', 9999 );
+
+// Update footer copyright with settings
+function sentinel_reign_custom_footer_copyright( $copyright ) {
+    $custom_copyright = get_option( 'sentinel_footer_copyright', '' );
+    if ( ! empty( $custom_copyright ) ) {
+        return $custom_copyright;
+    }
+    return $copyright;
+}
+add_filter( 'generate_copyright', 'sentinel_reign_custom_footer_copyright' );
+
+// Register homepage template
+function sentinel_reign_register_templates( $templates ) {
+    $templates['front-page.php'] = 'Advanced Homepage';
+    return $templates;
+}
+add_filter( 'theme_page_templates', 'sentinel_reign_register_templates' );
 
