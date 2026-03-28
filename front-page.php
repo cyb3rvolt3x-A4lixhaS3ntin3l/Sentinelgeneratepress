@@ -21,6 +21,12 @@ $most_viewed_count = get_option( 'sentinel_most_viewed_count', 5 );
 $founder_name = get_option( 'sentinel_founder_name', 'Syed Abrar' );
 $founder_bio = get_option( 'sentinel_founder_bio', '' );
 $founder_image = get_option( 'sentinel_founder_image', '' );
+
+// About Us Section Options
+$about_us_title = get_option( 'sentinel_about_us_title', 'About SentinelReign' );
+$about_us_content = get_option( 'sentinel_about_us_content', '' );
+$team_members_json = get_option( 'sentinel_team_members', '' );
+$team_members = is_array( $team_members_json ) ? $team_members_json : json_decode( $team_members_json, true );
 ?>
 
 <div <?php generate_do_attr( 'content' ); ?>>
@@ -39,6 +45,80 @@ $founder_image = get_option( 'sentinel_founder_image', '' );
 				</div>
 			</div>
 		</section>
+
+		<!-- About Us Section -->
+		<?php if ( ! empty( $about_us_content ) ) : ?>
+		<section class="sentinel-about-section" data-aos="fade-up">
+			<div class="sentinel-container">
+				<div class="section-header">
+					<h2 class="section-title"><?php echo esc_html( $about_us_title ); ?></h2>
+					<span class="section-divider"></span>
+				</div>
+				<div class="about-us-content">
+					<p><?php echo esc_html( $about_us_content ); ?></p>
+				</div>
+			</div>
+		</section>
+		<?php endif; ?>
+
+		<!-- Team Section -->
+		<?php if ( ! empty( $team_members ) && is_array( $team_members ) ) : ?>
+		<section class="sentinel-team-section" data-aos="fade-up">
+			<div class="sentinel-container">
+				<div class="section-header">
+					<h2 class="section-title">Meet Our Team</h2>
+					<span class="section-divider"></span>
+				</div>
+				<div class="sentinel-grid sentinel-grid-4 team-grid">
+					<?php foreach ( $team_members as $member ) : 
+						if ( empty( $member['name'] ) ) continue;
+						$member_image = ! empty( $member['image'] ) ? $member['image'] : '';
+						$member_role = ! empty( $member['role'] ) ? $member['role'] : 'Team Member';
+						$member_bio = ! empty( $member['bio'] ) ? $member['bio'] : '';
+						$member_social = ! empty( $member['social'] ) ? $member['social'] : array();
+					?>
+					<div class="team-member-card">
+						<div class="team-member-image">
+							<?php if ( $member_image ) : ?>
+								<img src="<?php echo esc_url( $member_image ); ?>" alt="<?php echo esc_attr( $member['name'] ); ?>" loading="lazy" />
+							<?php else : ?>
+								<div class="team-member-placeholder">
+									<i class="fas fa-user"></i>
+								</div>
+							<?php endif; ?>
+						</div>
+						<div class="team-member-info">
+							<h3 class="team-member-name"><?php echo esc_html( $member['name'] ); ?></h3>
+							<span class="team-member-role"><?php echo esc_html( $member_role ); ?></span>
+							<?php if ( $member_bio ) : ?>
+								<p class="team-member-bio"><?php echo esc_html( $member_bio ); ?></p>
+							<?php endif; ?>
+							<?php if ( ! empty( $member_social ) ) : ?>
+								<div class="team-member-social">
+									<?php if ( ! empty( $member_social['twitter'] ) ) : ?>
+										<a href="<?php echo esc_url( $member_social['twitter'] ); ?>" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+											<i class="fab fa-twitter"></i>
+										</a>
+									<?php endif; ?>
+									<?php if ( ! empty( $member_social['linkedin'] ) ) : ?>
+										<a href="<?php echo esc_url( $member_social['linkedin'] ); ?>" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+											<i class="fab fa-linkedin-in"></i>
+										</a>
+									<?php endif; ?>
+									<?php if ( ! empty( $member_social['github'] ) ) : ?>
+										<a href="<?php echo esc_url( $member_social['github'] ); ?>" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+											<i class="fab fa-github"></i>
+										</a>
+									<?php endif; ?>
+								</div>
+							<?php endif; ?>
+						</div>
+					</div>
+					<?php endforeach; ?>
+				</div>
+			</div>
+		</section>
+		<?php endif; ?>
 
 		<!-- Founder Section -->
 		<?php if ( ! empty( $founder_bio ) || ! empty( $founder_image ) ) : ?>
